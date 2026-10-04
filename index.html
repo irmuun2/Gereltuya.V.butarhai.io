@@ -1,0 +1,761 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Бутархайн эмнэлэг</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@600;700&family=Nunito:wght@400;600;700;800;900&display=swap">
+<style>
+:root{
+  --bg:#f3fcf8; --ink:#173f38; --muted:#4f6f68; --line:#cdeee2; --card:#ffffff;
+  --mint:#2bb58a; --mint-d:#17876a; --mint-l:#bdf0dc; --mint-soft:#e6faf2;
+  --red:#e5484d; --red-d:#b8333a; --red-soft:#ffe5e6;
+  --blue:#3d8be0; --blue-soft:#e3efff;
+  --yel:#ffc93c; --yel-soft:#fff6d8;
+  --shadow:0 10px 26px rgba(23,63,56,.13);
+  --hfont:"Comfortaa","Nunito",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{color:var(--ink);font-family:"Nunito","Segoe UI",system-ui,sans-serif;font-size:20px;line-height:1.4;overflow:hidden;background-color:var(--bg);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath d='M17 11h6v6h6v6h-6v6h-6v-6h-6v-6h6z' fill='%232bb58a' fill-opacity='.08'/%3E%3Cpath d='M57 51h4v4h4v4h-4v4h-4v-4h-4v-4h4z' fill='%23e5484d' fill-opacity='.07'/%3E%3C/svg%3E")}
+button{font:inherit;cursor:pointer}
+input{font:inherit}
+
+/* ===== Header: clinic sign ===== */
+.top{position:fixed;inset:0 0 auto 0;height:64px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;z-index:20;background:#fff;border-bottom:5px solid var(--mint);box-shadow:0 4px 14px rgba(23,63,56,.08);padding:0 14px;gap:14px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--hfont);font-weight:700;font-size:19px;color:var(--mint-d);white-space:nowrap}
+.cross{width:34px;height:34px;position:relative;flex:none;background:#fff;border-radius:8px}
+.cross::before,.cross::after{content:"";position:absolute;background:var(--red);border-radius:3px}
+.cross::before{left:12px;top:3px;width:10px;height:28px}
+.cross::after{top:12px;left:3px;height:10px;width:28px}
+.stage{min-width:0}
+.stage .lbl{display:block;font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.5px}
+.stage .val{display:block;font-family:var(--hfont);font-weight:700;font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.right{display:flex;align-items:center;gap:8px}
+.healed{font-weight:800;font-size:16px;background:var(--mint-soft);border:2px solid var(--mint-l);border-radius:20px;padding:3px 12px;white-space:nowrap}
+.timer{font-family:var(--hfont);font-weight:700;font-size:22px;font-variant-numeric:tabular-nums;color:var(--mint-d);background:var(--mint-soft);padding:2px 10px;border-radius:10px;cursor:pointer}
+.timer.warn{color:#fff;background:#ff9f2e}.timer.over{color:#fff;background:var(--red)}
+.tbtn{border:2px solid var(--line);background:#fff;border-radius:10px;padding:3px 10px;font-weight:800;font-size:16px;color:var(--ink)}
+.tbtn:hover{border-color:var(--mint);color:var(--mint-d)}
+
+/* ===== Slides ===== */
+.deck{position:absolute;inset:74px 0 70px 0;z-index:1}
+.slide{position:absolute;inset:0;overflow:auto;padding:8px clamp(16px,3.5vw,48px) 16px;opacity:0;visibility:hidden;transform:translateX(30px);transition:opacity .35s,transform .35s,visibility .35s}
+.slide.active{opacity:1;visibility:visible;transform:none}
+.inner{max-width:1280px;margin:0 auto}
+h2{font-family:var(--hfont);font-weight:700;font-size:clamp(26px,2.8vw,36px);margin:0 0 4px;display:flex;align-items:center;gap:12px;color:var(--mint-d)}
+h3{font-size:21px;margin:0 0 6px;font-weight:900}
+.sub{color:var(--muted);margin:0 0 10px;font-size:18px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:14px;letter-spacing:.5px;color:#fff;background:var(--red);padding:2px 12px;border-radius:20px;text-transform:uppercase}
+.card{background:var(--card);border:2px solid var(--line);box-shadow:var(--shadow);padding:14px 18px;border-radius:16px;position:relative}
+.card.mint{background:var(--mint-soft);border-color:var(--mint-l)}
+.clip{background:#fff;border:3px solid #c9a46a;border-radius:14px;padding:30px 20px 14px;position:relative;box-shadow:var(--shadow)}
+.clip::before{content:"";position:absolute;top:-12px;left:50%;transform:translateX(-50%);width:120px;height:26px;background:linear-gradient(#b9c3c7,#8a979c);border-radius:8px 8px 4px 4px;box-shadow:0 2px 0 #6d787c}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g37{display:grid;grid-template-columns:3fr 7fr;gap:18px}
+.g64{display:grid;grid-template-columns:6fr 4fr;gap:18px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{border:none;border-radius:12px;padding:9px 16px;font-weight:800;background:var(--mint);color:#fff;box-shadow:0 4px 0 var(--mint-d);transition:transform .1s,filter .15s}
+.btn:hover{filter:brightness(1.08)}
+.btn:active{transform:translateY(2px);box-shadow:0 2px 0 var(--mint-d)}
+.btn[disabled]{opacity:.4;cursor:default}
+.btn.red{background:var(--red);box-shadow:0 4px 0 var(--red-d)}
+.btn.blue{background:var(--blue);box-shadow:0 4px 0 #2a69b0}
+.btn.ghost{background:#fff;color:var(--ink);border:2px solid var(--line);box-shadow:none}
+.btn.ghost.on{background:var(--mint-soft);border-color:var(--mint);color:var(--mint-d)}
+.btn.sm{padding:6px 12px;font-size:16px}
+.muted{color:var(--muted)}
+.rule{padding:9px 13px;margin:7px 0;background:var(--mint-soft);border-left:6px solid var(--mint);border-radius:0 10px 10px 0}
+.rule.r{background:var(--red-soft);border-color:var(--red)}.rule.y{background:var(--yel-soft);border-color:var(--yel)}.rule.b{background:var(--blue-soft);border-color:var(--blue)}
+.feedback{font-size:19px;font-weight:800;min-height:28px;margin-top:6px}
+.feedback.ok{color:var(--mint-d)}.feedback.no{color:var(--red)}
+.hide{display:none!important}
+
+/* fractions */
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1.05;margin:0 3px;font-weight:800}
+.fr>span:first-child{border-bottom:2.5px solid currentColor;padding:0 4px}
+.whole{font-weight:800;margin-left:3px}
+.big{font-size:34px;font-weight:800}
+.fin{display:inline-flex;align-items:center;gap:4px;vertical-align:middle}
+.fin input{width:52px;text-align:center;font-size:21px;font-weight:800;border:2px solid var(--line);border-radius:8px;padding:1px 2px;background:#fff;color:var(--ink)}
+.fin .fw{width:42px;height:40px}
+.fin .fst{display:inline-flex;flex-direction:column;gap:3px}
+.fin .fst input:first-child{border-bottom:3px solid var(--ink)}
+.fin.ok input{border-color:var(--mint);background:var(--mint-soft)}.fin.no input{border-color:var(--red);background:#fff0f0}
+
+/* visual */
+.vis{background:#fff;border:2px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:6px}
+.vis svg{display:block;width:100%;height:auto;max-height:calc(100vh - 360px)}
+
+/* ===== Nav ===== */
+.nav{position:fixed;inset:auto 0 0 0;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:20;gap:10px;background:#fff;border-top:5px solid var(--mint)}
+.dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.dot{min-width:38px;height:32px;border:2px solid var(--line);border-radius:16px;background:#fff;color:var(--muted);font-weight:800;font-size:14px;transition:.2s}
+.dot.on{background:var(--red);color:#fff;border-color:var(--red)}
+.dot.done{background:var(--mint-soft);border-color:var(--mint-l);color:var(--mint-d)}
+.tnotes{position:fixed;right:18px;bottom:78px;width:min(440px,calc(100vw - 36px));max-height:calc(100vh - 170px);overflow:auto;background:#fffdf3;border:2px solid var(--yel);border-radius:14px;padding:12px 18px;font-size:16px;box-shadow:var(--shadow);z-index:25;display:none}
+.tnotes.show{display:block}
+.tnotes h4{margin:0 0 6px;font-size:17px}
+.tnotes ul{margin:0;padding-left:20px}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
+
+/* ===== Intro ===== */
+.intro{min-height:calc(100vh - 170px);display:flex;align-items:center;justify-content:center}
+.sign{background:#fff;max-width:980px;width:100%;border-radius:28px;box-shadow:0 22px 50px rgba(23,63,56,.18);overflow:hidden;border:4px solid var(--mint)}
+.sign .band{background:var(--mint);color:#fff;display:flex;justify-content:space-between;align-items:center;padding:12px 26px;font-weight:800;font-size:clamp(18px,2vw,24px)}
+.sign .body{display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:center;padding:26px 34px 20px}
+.bigcross{width:150px;height:150px;position:relative}
+.bigcross::before,.bigcross::after{content:"";position:absolute;background:var(--red);border-radius:12px}
+.bigcross::before{left:50px;top:0;width:50px;height:150px}.bigcross::after{top:50px;left:0;height:50px;width:150px}
+.sign .subj{font-family:var(--hfont);font-weight:700;font-size:clamp(44px,5.5vw,72px);line-height:1.05;color:var(--mint-d)}
+.sign .topic{font-weight:900;font-size:clamp(26px,3vw,40px);color:var(--ink);margin-top:6px}
+.sign .tag2{font-family:var(--hfont);font-weight:700;color:var(--red);font-size:clamp(18px,2vw,24px);margin-top:6px}
+.sign .foot{display:flex;justify-content:space-between;align-items:center;border-top:3px dashed var(--mint-l);padding:12px 30px;font-weight:800;font-size:clamp(18px,2vw,24px)}
+
+/* reception */
+.patient{display:flex;gap:16px;align-items:center}
+.patient .av{font-size:74px;line-height:1;background:var(--mint-soft);border-radius:50%;width:110px;height:110px;display:flex;align-items:center;justify-content:center;flex:none;border:4px solid var(--mint-l)}
+.chart{font-size:18px;width:100%;border-collapse:collapse}
+.chart td{padding:5px 6px;border-bottom:1px dashed var(--line)}
+.chart td:first-child{color:var(--muted);font-weight:700;width:38%}
+.thermo{width:40px;height:200px;border:4px solid var(--ink);border-radius:20px 20px 24px 24px;position:relative;background:#fff;overflow:hidden;margin:0 auto}
+.thermo i{position:absolute;left:0;right:0;bottom:0;background:var(--red);transition:height .5s;height:10%}
+.tally{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center}
+.tally .cnt{font-family:var(--hfont);font-size:40px;font-weight:700;text-align:center}
+.path{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.path span{background:#fff;border:2px solid var(--mint-l);border-radius:20px;padding:3px 10px;font-weight:800;font-size:15px}
+
+/* ward */
+.beds{display:flex;flex-direction:column;gap:6px}
+.bed{display:flex;align-items:center;gap:8px;padding:6px 10px;border:2px solid var(--line);border-radius:12px;background:#fff;font-weight:800;font-size:17px;cursor:pointer;text-align:left}
+.bed .em{font-size:28px}.bed .st{margin-left:auto;font-size:20px}
+.bed.on{border-color:var(--red);background:var(--red-soft)}
+.bed.ok{border-color:var(--mint);background:var(--mint-soft)}
+.steps{list-style:none;margin:0;padding:0}
+.steps li{display:flex;align-items:center;gap:10px;padding:5px 12px;margin:4px 0;border:2px solid var(--line);border-radius:12px;font-size:22px;cursor:pointer;background:#fff;min-height:54px}
+.steps li .n{width:28px;height:28px;border-radius:50%;background:var(--ink);color:#fff;font-size:15px;display:flex;align-items:center;justify-content:center;flex:none}
+.steps li:hover{border-color:var(--blue)}
+.steps li.good{border-color:var(--mint);background:var(--mint-soft)}
+.steps li.bad{border-color:var(--red);background:var(--red-soft)}
+.steps li.bad::after{content:"🩹";margin-left:auto}
+.phase{display:flex;gap:6px;margin:4px 0 6px}
+.phase span{flex:1;text-align:center;font-weight:800;font-size:15px;padding:4px;border-radius:10px;background:#eef3f2;color:var(--muted)}
+.phase span.on{background:var(--red);color:#fff}.phase span.done{background:var(--mint);color:#fff}
+.diag{display:flex;flex-wrap:wrap;gap:6px}
+.diag .btn{font-size:16px;padding:6px 10px}
+
+/* chips multiples */
+.mrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:4px 0}
+.mrow b{min-width:150px;font-size:17px}
+.mc{border:2px solid var(--line);background:#fff;border-radius:10px;min-width:46px;padding:3px 6px;font-weight:800;font-size:19px}
+.mc.hit{background:var(--mint);color:#fff;border-color:var(--mint)}
+.mc.miss{background:var(--red-soft);border-color:var(--red)}
+.mc.cm{background:var(--yel-soft);border-color:var(--yel)}
+
+/* practice */
+.lv .btn{font-size:17px}
+.qbox{font-size:34px;font-weight:800;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;padding:6px}
+.score{font-weight:800;font-size:18px}
+.probs{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.probs .card{padding:10px 14px}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mini .it{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:21px;font-weight:800;background:var(--mint-soft);border-radius:12px;padding:4px 8px}
+.qq{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.qq .card{padding:10px 14px}
+.opts{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.opts .btn{font-size:20px;min-width:80px}
+.opts .btn.right{background:var(--mint);color:#fff;border-color:var(--mint)}
+.opts .btn.wrong{background:var(--red-soft);border-color:var(--red);color:var(--red)}
+
+/* licence */
+.lic{border:4px solid var(--mint);border-radius:18px;background:linear-gradient(135deg,#fff 0%,var(--mint-soft) 100%);padding:14px 18px;position:relative;display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}
+.lic .ph{width:96px;height:112px;border-radius:12px;background:#fff;border:3px dashed var(--mint);display:flex;align-items:center;justify-content:center;font-size:56px}
+.lic .nm{border-bottom:2px dashed var(--mint-d);min-height:34px;font-weight:900;font-size:24px;outline:none;padding:0 6px}
+.lic .nm:empty::before{content:attr(data-ph);color:#9bb8b0}
+.lic .stamp{position:absolute;right:16px;bottom:10px;border:4px solid var(--red);color:var(--red);border-radius:50%;width:92px;height:92px;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:900;font-size:14px;transform:rotate(-14deg);opacity:.85}
+.lic.locked{filter:grayscale(1);opacity:.45}
+.stars3{display:flex;gap:10px}
+.stars3 button{font-size:38px;border:none;background:none;filter:grayscale(1);opacity:.4;transition:.2s}
+.stars3 button.on{filter:none;opacity:1;transform:scale(1.1)}
+.hw li{margin:5px 0}
+
+@media (max-height:900px){
+  body{font-size:18px}
+  h2{font-size:27px}
+  .sub{font-size:17px;margin-bottom:6px}
+  .card{padding:10px 14px}
+  .rule{padding:6px 10px;margin:5px 0;font-size:17px}
+  .steps li{font-size:19px;min-height:46px;padding:3px 10px}
+  .qbox{font-size:28px}
+  .big{font-size:28px}
+  .patient .av{width:86px;height:86px;font-size:56px}
+  .thermo{height:150px}
+  .vis svg{max-height:calc(100vh - 330px)}
+  .bed{padding:4px 8px;font-size:16px}.bed .em{font-size:24px}
+  .fin input{font-size:19px;width:46px}
+  .mini .it{font-size:19px}
+  .opts .btn{font-size:18px}
+  .bigcross{width:110px;height:110px}.bigcross::before{left:37px;width:36px;height:110px}.bigcross::after{top:37px;height:36px;width:110px}
+}
+@media (max-width:1000px){
+  .grid2,.g37,.g64,.probs,.qq,.mini{grid-template-columns:1fr !important}
+  .dots,.healed{display:none}
+  .brand span{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><div class="cross"></div><span>Бутархайн эмнэлэг</span></div>
+  <div class="stage"><span class="lbl">Математик · 5-р анги · <span id="sheetNo">1/10</span></span><span class="val" id="stageName"></span></div>
+  <div class="right">
+    <span class="healed" title="Тойрон үзлэгт эдгэрсэн өвчтөн">💚 Эдгэрсэн: <b id="healed">0</b>/6</span>
+    <span class="timer" id="timer" title="Үлдсэн хугацаа (2 удаа дарвал 40:00 болно)">⏱ <span id="tval">40:00</span></span>
+    <button class="tbtn" id="tPlay" title="Цаг эхлүүлэх / зогсоох">▶</button>
+    <button class="tbtn" id="notesBtn" title="Багшийн тэмдэглэл (N)">📝</button>
+    <button class="tbtn" id="fsBtn" title="Бүтэн дэлгэц (F)">⛶</button>
+  </div>
+</header>
+
+<main class="deck">
+
+<!-- 1. Танилцуулга -->
+<section class="slide" data-name="Танилцуулга" data-min="1"
+  data-notes="Мэндчилээд өнөөдрийн хичээлийг танилцуулна: «Өнөөдөр манай анги бутархайн эмнэлэг болно. Та нар бүгд эмч!»|Бүтэц: Хүлээн авах → Оношлох → Эмчилгээний заавар (2) → Тойрон үзлэг (6 өвчтөн) → Эрүүл мэндийн үзлэг (дасгал) → Яаралтай дуудлага (сурах бичгийн бодлого) → Эмчийн үнэмлэх → Гэрийн даалгавар.|Сурах бичиг: х.59–61 «Энгийн бутархайг нэмэх, хасах».|Дээд талын ▶ товчоор 40 минутын цагийг эхлүүлнэ.">
+  <div class="inner intro">
+    <div class="sign">
+      <div class="band"><span>🏫 1-р сургууль</span><span>Хүлээн авах цаг: 40 минут ⏱</span></div>
+      <div class="body">
+        <div class="bigcross"></div>
+        <div>
+          <div class="subj">Математик</div>
+          <div class="topic">Энгийн бутархайг нэмэх, хасах</div>
+          <div class="tag2">Бутархайн эмнэлэг: өнөөдөр бид эмч! 🩺</div>
+        </div>
+      </div>
+      <div class="foot">
+        <span>👩‍🏫 Багш: В. Гэрэлтуяа</span>
+        <svg width="190" height="60" viewBox="0 0 190 60" aria-hidden="true"><path d="M2 32 H50 L60 12 L72 52 L84 22 L92 32 H188" fill="none" stroke="#e5484d" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. Хүлээн авах -->
+<section class="slide" data-name="① Хүлээн авах: анхны өвчтөн" data-min="3"
+  data-notes="Өвчтөний картыг чангаар уншина. Ангиар «зөв үү, буруу юу?» гэж санал авна: хүүхэд гараа өргөхөд багш товч дарж тоолно.|Термометр «өвчтэй» гэсэн саналын хувийг үзүүлнэ.|Дараа нь «🔎 Шинж тэмдэг» дарж, тооцоолж үнэлэх аргыг ярилцана: 2/4 бол яг хагас, тэр дээр нэмэхэд хагасаас их гарах ёстой. Гэтэл 3/8 нь хагасаас бага → буруу!|Яагаад гэдгийг одоохондоо бүү хэл — дараагийн хуудсанд «оношилно».">
+  <div class="inner">
+    <span class="chip">Хүлээн авах</span>
+    <h2>🚑 Эмнэлэгт анхны өвчтөн ирлээ!</h2>
+    <div class="grid2">
+      <div class="clip">
+        <div class="patient">
+          <div class="av">🐰</div>
+          <div>
+            <h3 style="margin:0">Өвчтөн: Туулай Тоосго</h3>
+            <div class="muted" style="font-size:17px">Нас: 10 · Тасаг: Бутархай</div>
+          </div>
+        </div>
+        <table class="chart" style="margin-top:8px">
+          <tr><td>Бодлого</td><td class="big" id="s2Prob"></td></tr>
+          <tr><td>Гомдол</td><td>«Би бялууны дөрөвний нэгийг, дараа нь дөрөвний хоёрыг идсэн. Гэтэл бодоход бага юм шиг гарчихлаа!»</td></tr>
+          <tr><td>Эмчийн асуулт</td><td><b>Энэ бодолт эрүүл (зөв) үү, өвчтэй (буруу) юу?</b></td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>🗳️ Эмч нарын санал</h3>
+        <div class="tally">
+          <div style="text-align:center"><button class="btn" id="tWell">💚 Эрүүл</button><div class="cnt" id="cWell">0</div></div>
+          <div><div class="thermo"><i id="thermo"></i></div><div style="text-align:center;font-size:14px;font-weight:800">🌡️ «өвчтэй»</div></div>
+          <div style="text-align:center"><button class="btn red" id="tSick">🤒 Өвчтэй</button><div class="cnt" id="cSick">0</div></div>
+        </div>
+        <div class="row" style="justify-content:center;margin-top:6px"><button class="btn blue sm" id="s2Reveal">🔎 Шинж тэмдэг</button><button class="btn ghost sm" id="s2Reset">↺</button></div>
+        <div id="s2Hint" class="hide">
+          <div class="vis" style="margin-top:6px"><svg id="s2Svg" viewBox="0 0 640 130"></svg></div>
+          <div class="rule r" style="font-size:17px"><span class="fr"><span>2</span><span>4</span></span> нь дангаараа <b>хагас</b>. Хагас дээр нэмэхэд хагасаас <b>их</b> гарах ёстой. Гэтэл <span class="fr"><span>3</span><span>8</span></span> хагасаас <b>бага</b>! 🤒</div>
+        </div>
+        <div class="path"><span>🚑 Хүлээн авах</span><span>🔎 Оношлох</span><span>💊 Эмчилгээ</span><span>🛏️ Тойрон үзлэг</span><span>🩺 Үзлэг</span><span>🎖️ Үнэмлэх</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Оношлох -->
+<section class="slide" data-name="② Оношлох: бутархайн туузаар шалгах" data-min="4"
+  data-notes="«🔬 Нийлүүлэх» дарахад 1/4 ба 2/4-ийн хэсгүүд доод туузанд шилжинэ: хэсгийн хэмжээ өөрчлөгдөхгүй — дөрөвний нэг + дөрөвний хоёр = дөрөвний гурав.|«🤒 Өвчтөний хариу» дарж 3/8-ийг харуулна — тасархай шугамаар хоёр хариуг харьцуулна.|Асуулт: аль нь их вэ? (3/4). Онош: туулай хуваарийг (4 + 4 = 8) нэмсэн. Хуваарь бол «хэсгийн нэр» — дөрөвний нэгийг нэмэхэд наймны нэг болохгүй.|«🧪 Сорил»: энэ буруу дүрмээр 1/2 + 1/2 = 2/4 = 1/2 болно — хагас + хагас = хагас гэж үү? Инээдтэй жишээгээр баталгаажуулна.">
+  <div class="inner">
+    <span class="chip">Оношлох</span>
+    <h2>🔎 Туулайн бодолтыг рентгенээр харъя</h2>
+    <div class="g64">
+      <div class="vis"><svg id="dSvg" viewBox="0 0 760 330"></svg></div>
+      <div>
+        <div class="row"><button class="btn" id="dMerge">🔬 Нийлүүлэх</button><button class="btn red" id="dCmp">🤒 Өвчтөний хариу</button><button class="btn ghost sm" id="dReset">↺</button></div>
+        <div class="card" style="margin-top:10px">
+          <b>Аль нь их вэ?</b>
+          <div class="opts" id="dQ">
+            <button class="btn ghost" data-v="a"><span class="fr"><span>3</span><span>4</span></span></button>
+            <button class="btn ghost" data-v="b"><span class="fr"><span>3</span><span>8</span></span></button>
+            <button class="btn ghost" data-v="c">Тэнцүү</button>
+          </div>
+          <div class="feedback" id="dFb"></div>
+        </div>
+        <div class="rule r"><b>Онош:</b> Хуваарийг нэмсэн! <span class="fr"><span>1</span><span>4</span></span> + <span class="fr"><span>2</span><span>4</span></span> ≠ <span class="fr"><span>1 + 2</span><span>4 + 4</span></span></div>
+        <button class="btn blue sm" id="dAbsBtn">🧪 Сорил: <span class="fr"><span>1</span><span>2</span></span> + <span class="fr"><span>1</span><span>2</span></span> = ?</button>
+        <div class="rule y hide" id="dAbs">Буруу дүрмээр: <span class="fr"><span>1</span><span>2</span></span> + <span class="fr"><span>1</span><span>2</span></span> = <span class="fr"><span>2</span><span>4</span></span> = <span class="fr"><span>1</span><span>2</span></span> 😵 Хагас + хагас = <b>хагас</b> гэж үү? Үгүй — <b>1 бүхэл</b>!</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. Эмчилгээ 1 -->
+<section class="slide" data-name="③ Эмчилгээний заавар: ижил хуваарь" data-min="4"
+  data-notes="Гулсуураар хуваарь, хоёр хүртвэрийг сонгоод «▶ Үйлдэл» дарна. Хүүхдүүд эхлээд хариуг таамаглаж хэлнэ.|Нэмэх: хоёр дахь бутархайн хэсгүүд эхнийхийн ард очиж зогсоно. Хасах: хасах хэсгүүд улаан загалмайгаар «арилна».|Дүрэм (х.59): Хуваарь ижил бол хуваарийг хэвээр үлдээж, хүртвэрийг нэмнэ/хасна.|Жишээ асуулт: 3/8 + 5/8 (292а) = 8/8 = 1; 4/7 − 1/7 = 3/7.">
+  <div class="inner">
+    <span class="chip">Эмчилгээний заавар ①</span>
+    <h2>💊 Хуваарь ижил бол…</h2>
+    <div class="g64">
+      <div>
+        <div class="vis"><svg id="rSvg" viewBox="0 0 760 260"></svg></div>
+        <div class="card" style="margin-top:8px;padding:8px 14px">
+          <div class="row" style="justify-content:space-between">
+            <label>Хуваарь <b id="rDv">8</b> <input type="range" id="rD" min="2" max="12" value="8"></label>
+            <label>1-р хүртвэр <b id="rAv">3</b> <input type="range" id="rA" min="1" max="7" value="3"></label>
+            <label>2-р хүртвэр <b id="rBv">2</b> <input type="range" id="rB" min="1" max="5" value="2"></label>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="row"><button class="btn ghost on" data-op="+">➕ Нэмэх</button><button class="btn ghost" data-op="−">➖ Хасах</button><button class="btn red" id="rGo">▶ Үйлдэл</button></div>
+        <div class="qbox" id="rForm" style="margin-top:6px"></div>
+        <div class="rule"><b>💊 Эмчилгээний заавар №1</b><br>Хуваарь <b>ижил</b> бол хуваарийг <b>хэвээр</b> үлдээнэ, зөвхөн <b>хүртвэрийг</b> нэмнэ (хасна).</div>
+        <div class="qbox" style="font-size:26px"><span class="fr"><span>a</span><span>c</span></span> ± <span class="fr"><span>b</span><span>c</span></span> = <span class="fr"><span>a ± b</span><span>c</span></span></div>
+        <div class="feedback" id="rFb"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Эмчилгээ 2 -->
+<section class="slide" data-name="④ Эмчилгээний заавар: ерөнхий хуваарь" data-min="5"
+  data-notes="Сурах бичиг х.59 жишээ 2 (1/4 + 5/8), жишээ 3 (7/8 − 1/2, сүүний бодлого), х.60 (1/4 + 5/6) — дээд талын товчоор сонгоно.|1) Хоёр хуваарийн хуваагдагчдаас ижил тоог хайж дарна (х.60 «Ерөнхий хуваагдагчийг олох»). Хамгийн багыг нь сонгохыг хичээнэ: 8; 8; 12.|2) «✂ Хэсэглэх»: туузыг жижиг хэсэгт хуваахад бутархай ижил хэмжээтэй үлдэнэ: 1/4 = 2/8, 1/2 = 4/8, 1/4 = 3/12, 5/6 = 10/12. Хүртвэр, хуваарийг ижил тоогоор үржүүлнэ!|3) «Нийлүүлэх» → хариугаа бичиж шалгана. Хариу: 7/8; 3/8 л сүү; 13/12 = 1 1/12.">
+  <div class="inner">
+    <span class="chip">Эмчилгээний заавар ②</span>
+    <h2>💉 Хуваарь өөр бол — эхлээд ижил болго!</h2>
+    <div class="row" id="cdTabs" style="margin-bottom:4px"></div>
+    <div class="g64">
+      <div class="vis"><svg id="cdSvg" viewBox="0 0 760 300"></svg></div>
+      <div>
+        <div class="card" style="padding:8px 12px">
+          <div style="font-weight:800;font-size:17px">1) Ижил хуваагдагчийг хайж дар:</div>
+          <div class="mrow" id="cdM1"></div>
+          <div class="mrow" id="cdM2"></div>
+          <div class="feedback" id="cdMfb" style="font-size:17px"></div>
+        </div>
+        <div class="row" style="margin:8px 0"><button class="btn blue" id="cdCut" disabled>✂ 2) Хэсэглэх</button><button class="btn red" id="cdGo" disabled>3) Нийлүүлэх</button></div>
+        <div class="qbox" id="cdForm" style="font-size:26px;justify-content:flex-start"></div>
+        <div class="row"><b>Хариу:</b> <span id="cdIn"></span><button class="btn sm" id="cdChk">✓</button></div>
+        <div class="feedback" id="cdFb"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Тойрон үзлэг -->
+<section class="slide" data-name="⑤ Тойрон үзлэг: 6 өвчтөн" data-min="8"
+  data-notes="Өвчтөн бүрийн бодолтод нэг алдаа бий. Алхам бүр: ① алдаатай мөрийг дарах ② оношийг сонгох ③ зөв хариуг (эмчилгээ) бичих.|Хариу: 🐰 1/4+2/4 → 3/4 (хуваарийг нэмсэн); 🐻 7/8−1/2 → 3/8 (ерөнхий хуваарь олоогүй; х.59 жишээ 3); 🐼 1/4+5/8 → 7/8 (хүртвэрийг үржүүлээгүй; х.59 жишээ 2); 🦊 5/6−1/12 → 3/4 (хураагаагүй; 292е); 🐯 2 3/4 − 1 1/8 → 1 5/8 (бүхэл хэсгийг мартсан; 293); 🐸 1/4+5/6 → 1 1/12 (хуваарийг нэмсэн; х.60).|Хосоороо ярилцуулж, санал авч болно. ⭐ Хүүхдэд 🐰🐻🐼, ⭐⭐⭐ хүүхдэд 🦊🐯🐸-ийг даалгаж болно.|Эдгэрсэн өвчтөний тоо дээд мөрөнд харагдана.">
+  <div class="inner">
+    <span class="chip">Тойрон үзлэг</span>
+    <h2>🛏️ Өвчтөн бүрийн бодолтыг эмчилье</h2>
+    <div class="g37">
+      <div class="beds" id="beds"></div>
+      <div class="clip" style="padding-top:22px">
+        <div class="row" style="justify-content:space-between"><h3 id="wName" style="margin:0"></h3><span class="muted" id="wLvl" style="font-weight:800"></span></div>
+        <div class="phase" id="wPhase"><span>① Алдаатай алхам</span><span>② Онош</span><span>③ Эмчилгээ</span></div>
+        <ul class="steps" id="wSteps"></ul>
+        <div class="diag" id="wDiag" style="margin-top:6px"></div>
+        <div class="row" id="wCure" style="margin-top:8px"><b>💊 Зөв хариу:</b> <span id="wIn"></span><button class="btn sm" id="wChk">✓ Эмчлэх</button><button class="btn ghost sm" id="wNext">Дараагийн өвчтөн ▶</button></div>
+        <div class="feedback" id="wFb"></div>
+        <svg id="wSvg" viewBox="0 0 760 70" style="width:100%;max-height:60px;display:block"></svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. Эрүүл мэндийн үзлэг -->
+<section class="slide" data-name="⑥ Эрүүл мэндийн үзлэг: дасгал" data-min="6"
+  data-notes="Түвшнээ сонгоно: ⭐ ижил хуваарь; ⭐⭐ нэг хуваарь нь нөгөөгийнхөө хуваагдагч; ⭐⭐⭐ ерөнхий хуваарь хайх, бүхэл хэсэгтэй бутархай.|Хариуг бичээд «✓ Шалгах» — тууз дээр зөв хариу дүрслэгдэнэ (дээд 2 мөр — өгөгдсөн бутархай, доод мөр — ерөнхий хуваарьтай нийлбэр/ялгавар).|Хураагаагүй хариуг зөв гэж тооцох боловч хураасан хэлбэрийг харуулна.|Самбарт гаргаж бодуулж болно, эсвэл хүүхдүүд дэвтэртээ бодоод, нэг нь самбарт бичнэ.">
+  <div class="inner">
+    <span class="chip">Эрүүл мэндийн үзлэг</span>
+    <h2>🩺 Бутархай бүрийг шалгаж, эрүүл гэрчилгээ олгоё</h2>
+    <div class="row lv" id="pLv" style="margin-bottom:6px">
+      <button class="btn ghost on" data-lv="1">⭐ Ижил хуваарь</button>
+      <button class="btn ghost" data-lv="2">⭐⭐ Нэг нь хуваагдагч</button>
+      <button class="btn ghost" data-lv="3">⭐⭐⭐ Ерөнхий хуваарь, бүхэл хэсэг</button>
+      <span class="score" style="margin-left:auto">💚 Эрүүл: <span id="pScore">0</span></span>
+    </div>
+    <div class="g64">
+      <div class="vis"><svg id="pSvg" viewBox="0 0 760 250"></svg></div>
+      <div class="card">
+        <div class="qbox" id="pQ"></div>
+        <div class="row" style="justify-content:center"><span id="pIn"></span><button class="btn" id="pChk">✓ Шалгах</button><button class="btn blue" id="pNew">🔄 Шинэ</button></div>
+        <div class="feedback" id="pFb" style="text-align:center"></div>
+        <div class="muted" style="font-size:16px;text-align:center">Бүхэл хэсэг байхгүй бол зүүн нүдийг хоосон орхи.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. Яаралтай дуудлага -->
+<section class="slide" data-name="⑦ Яаралтай дуудлага: сурах бичгийн бодлого" data-min="4"
+  data-notes="293 (х.61): 2 3/4 − 1 1/8 = 2 6/8 − 1 1/8 = 1 5/8 кг будаа үлдсэн.|297 (х.61): 1/3 + 3/6 = 2/6 + 3/6 = 5/6 зам.|296 (х.61, ⭐⭐⭐): а) 3/14 (9/14 − 6/14); б) 9/10 (1 4/5 = 18/10, 18/10 − 9/10); в) 1/5 (2/3 = 10/15, 10/15 − 7/15 = 3/15); г) 1 13/16 (1 3/16 + 5/8 = 19/16 + 10/16 = 29/16).|Хангалттай ижил утгатай хариуг (жишээ нь 3/15) зөв гэж тооцно.">
+  <div class="inner">
+    <span class="chip">🚨 Яаралтай дуудлага</span>
+    <h2>📞 Сурах бичгээс дуудлага ирлээ!</h2>
+    <div class="probs">
+      <div class="card">
+        <h3>🍚 №293 · Солонгын будаа</h3>
+        <div>Солонго <span class="whole">2</span><span class="fr"><span>3</span><span>4</span></span> кг будаа авч, <span class="whole">1</span><span class="fr"><span>1</span><span>8</span></span> кг-аар хоол хийв. Хэдэн кг үлдсэн бэ?</div>
+        <div class="row" style="margin-top:4px"><span id="e1"></span> кг <button class="btn sm" data-chk="e1" data-n="13" data-d="8">✓</button><span class="feedback" id="e1Fb"></span></div>
+      </div>
+      <div class="card">
+        <h3>🚲 №297 · Дугуйчин</h3>
+        <div>Эхний цагт замын <span class="fr"><span>1</span><span>3</span></span>, 2 дахь цагт <span class="fr"><span>3</span><span>6</span></span> хэсгийг явав. Нийт замын ямар хэсгийг явсан бэ?</div>
+        <div class="row" style="margin-top:4px"><span id="e2"></span><button class="btn sm" data-chk="e2" data-n="5" data-d="6">✓</button><span class="feedback" id="e2Fb"></span></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <h3>🧩 №296 ⭐⭐⭐ · Алга болсон бутархайг ол</h3>
+      <div class="mini">
+        <div class="it">а) <span id="m1"></span> + <span class="fr"><span>3</span><span>7</span></span> = <span class="fr"><span>9</span><span>14</span></span><button class="btn sm" data-chk="m1" data-n="3" data-d="14">✓</button><span class="feedback" id="m1Fb"></span></div>
+        <div class="it">б) <span id="m2"></span> + <span class="fr"><span>9</span><span>10</span></span> = <span class="whole">1</span><span class="fr"><span>4</span><span>5</span></span><button class="btn sm" data-chk="m2" data-n="9" data-d="10">✓</button><span class="feedback" id="m2Fb"></span></div>
+        <div class="it">в) <span class="fr"><span>2</span><span>3</span></span> − <span id="m3"></span> = <span class="fr"><span>7</span><span>15</span></span><button class="btn sm" data-chk="m3" data-n="1" data-d="5">✓</button><span class="feedback" id="m3Fb"></span></div>
+        <div class="it">г) <span id="m4"></span> − <span class="fr"><span>5</span><span>8</span></span> = <span class="whole">1</span><span class="fr"><span>3</span><span>16</span></span><button class="btn sm" data-chk="m4" data-n="29" data-d="16">✓</button><span class="feedback" id="m4Fb"></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 9. Эмчийн үнэмлэх -->
+<section class="slide" data-name="⑧ Эмчийн үнэмлэх: гарах шалгалт" data-min="4"
+  data-notes="Гарах шалгалт: 4 асуулт. Хүүхдүүд дэвтэртээ хариугаа бичээд, дараа нь хамтдаа товч дарж шалгана (эсвэл хурууны тоогоор 1, 2, 3 гэж санал өгнө).|Хариу: 1) 5/7; 2) 6; 3) 1/3 (5/6 − 3/6 = 2/6); 4) 3 (292в).|4 асуулт бүгд зөв болмогц үнэмлэх нээгдэнэ — нэрээ бичүүлнэ. Анх оролдлогоор зөв хариулсан тоо харагдана.">
+  <div class="inner">
+    <span class="chip">Гарах шалгалт</span>
+    <h2>🎖️ Эмчийн үнэмлэх авах шалгалт</h2>
+    <div class="g64">
+      <div class="qq" id="exQ"></div>
+      <div>
+        <div class="lic locked" id="lic">
+          <div class="ph">🧑‍⚕️</div>
+          <div>
+            <div style="font-family:var(--hfont);font-weight:700;color:var(--mint-d);font-size:20px">ЭМЧИЙН ҮНЭМЛЭХ</div>
+            <div style="font-size:15px" class="muted">Бутархайн эмнэлэг · 5-р анги</div>
+            <div class="nm" contenteditable="true" data-k="frac_doc_name" data-ph="Эмчийн нэр…"></div>
+            <div style="font-size:16px;margin-top:4px">Мэргэжил: <b>Бутархай нэмэх, хасах эмч</b></div>
+            <div style="font-size:16px">Оноо: <b id="exScore">0</b>/4 (анхны оролдлого)</div>
+          </div>
+          <div class="stamp">1-р<br>сургууль<br>✚ ЗӨВ</div>
+        </div>
+        <div class="feedback" id="exFb"></div>
+        <div class="rule" style="font-size:17px">🩺 <b>Эмчийн 3 алхам:</b> ① Хуваарийг шалга. ② Өөр бол ерөнхий хуваарь ол, хүртвэрийг ч үржүүл. ③ Хүртвэрийг нэмж/хасаад, хураа.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10. Гэрийн даалгавар -->
+<section class="slide" data-name="⑨ Гэрийн даалгавар" data-min="1"
+  data-notes="Гэрийн даалгавар (х.61): ⭐ 292 а, б, в, г; ⭐⭐ 292 д, е, ж; ⭐⭐⭐ 292 з, и + 294.|Хариу: а) 1; б) 2 2/3; в) 3; г) 5/7; д) 4/5; е) 3/4; ж) 9/14; з) 7/8 − 1/12 + 3/8 = 30/24 − 2/24 = 28/24 = 1 1/6; и) 6/25 + 15/25 − 9/25 = 12/25.|294: а) 5/128, 5/256, 5/512 (хуваарь 2 дахин өснө); б) 17 1/3, 20 2/3, 24 (3 1/3-оор нэмэгдэнэ).|Хүүхдүүд өөрсдийгөө ⭐-аар үнэлнэ.">
+  <div class="inner">
+    <span class="chip">Гэрийн даалгавар</span>
+    <h2>📋 Эмчийн жор: гэртээ эмчлэх</h2>
+    <div class="grid2">
+      <div class="clip">
+        <ul class="hw" style="padding-left:20px;margin:0">
+          <li>⭐ <b>№292 а, б, в, г</b> (х.61): <span class="fr"><span>3</span><span>8</span></span> + <span class="fr"><span>5</span><span>8</span></span>, &nbsp;1 − <span class="fr"><span>2</span><span>7</span></span> …</li>
+          <li>⭐⭐ <b>№292 д, е, ж</b>: <span class="fr"><span>2</span><span>5</span></span> + <span class="fr"><span>4</span><span>10</span></span>, &nbsp;<span class="fr"><span>5</span><span>7</span></span> − <span class="fr"><span>1</span><span>14</span></span> …</li>
+          <li>⭐⭐⭐ <b>№292 з, и</b> ба <b>№294</b> (зүй тогтол)</li>
+        </ul>
+        <div class="rule y" style="margin-top:10px">💡 Гэртээ нэг хүнд «буруу бодолт» бичиж өгөөд, түүнийг эмчлүүлээрэй!</div>
+      </div>
+      <div class="card mint" style="text-align:center">
+        <h3>Өнөөдөр би хэр сайн эмч байв?</h3>
+        <div class="stars3" id="stars3" style="justify-content:center"><button>⭐</button><button>⭐</button><button>⭐</button></div>
+        <p style="font-family:var(--hfont);font-weight:700;font-size:24px;color:var(--mint-d);margin:12px 0 0">Баярлалаа, бяцхан эмч нар! 🩺💚</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<nav class="nav">
+  <button class="btn" id="prevBtn">◀ Өмнөх</button>
+  <div class="dots" id="dots"></div>
+  <button class="btn" id="nextBtn">Дараах ▶</button>
+</nav>
+<div class="tnotes" id="tnotes"><h4>📝 Багшид зориулсан зөвлөмж</h4><ul id="tnList"></ul></div>
+<canvas id="confetti"></canvas>
+
+<script>
+/* ---------- Helpers ---------- */
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const $=id=>document.getElementById(id);
+const rnd=(a,b)=>a+Math.random()*(b-a);
+const ri=(a,b)=>Math.floor(a+Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const ease=k=>k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+const gcd=(a,b)=>b?gcd(b,a%b):Math.abs(a);
+const lcm=(a,b)=>a/gcd(a,b)*b;
+const SVGNS='http://www.w3.org/2000/svg';
+const C={mint:'#2bb58a',mintL:'#bdf0dc',blue:'#3d8be0',red:'#e5484d',redS:'#ffc9cb',ink:'#173f38',yel:'#ffc93c'};
+function el(tag,attrs,parent,text){const e=document.createElementNS(SVGNS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e}
+function anim(dur,f,done){const st=performance.now();(function s(now){const t=Math.min(1,(now-st)/dur);f(ease(t));if(t<1)requestAnimationFrame(s);else if(done)done()})(st)}
+
+/* fraction HTML */
+const frH=(n,d)=>`<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const mk=s=>s.replace(/\[(?:([^;\]]+);)?([^|\]]+)\|([^\]]+)\]/g,(m,w,n,d)=>(w?`<span class="whole">${w}</span>`:'')+frH(n,d));
+function valH(N,D){const g=gcd(N,D);N/=g;D/=g;const w=Math.floor(N/D),r=N%D;if(r===0)return `<b>${w}</b>`;return (w?`<span class="whole">${w}</span>`:'')+frH(r,D)}
+function fin(id,whole=true){$(id).innerHTML=`<span class="fin" id="${id}F">${whole?`<input class="fw" id="${id}W" inputmode="numeric" maxlength="2" title="Бүхэл хэсэг">`:''}<span class="fst"><input id="${id}N" inputmode="numeric" maxlength="3" title="Хүртвэр"><input id="${id}D" inputmode="numeric" maxlength="3" title="Хуваарь"></span></span>`}
+function readF(id){const W=$(id+'W'),w=W&&W.value.trim()?parseInt(W.value,10):0,ns=$(id+'N').value.trim(),ds=$(id+'D').value.trim();
+  if(isNaN(w))return null;
+  if(!ns&&!ds){if(w>0)return{w,n:0,d:1,N:w,D:1,red:true};return null}
+  if(!ns||!ds)return null;const n=parseInt(ns,10),d=parseInt(ds,10);if(isNaN(n)||isNaN(d)||d<=0)return null;
+  return{w,n,d,N:w*d+n,D:d,red:gcd(n,d)===1&&(w===0||n<d)&&!(n===0&&w===0)}}
+const eqV=(a,N,D)=>a&&a.N*D===N*a.D;
+function markF(id,ok){const f=$(id+'F');f.classList.remove('ok','no');if(ok!=null)f.classList.add(ok?'ok':'no')}
+function clearF(id){['W','N','D'].forEach(k=>{if($(id+k))$(id+k).value=''});markF(id,null)}
+
+/* SVG fraction label */
+function sFrac(svg,cx,cy,n,d,col,sz=24,w=0){let x=cx;if(w){el('text',{x:cx-sz*.45,y:cy+sz*.36,'text-anchor':'middle','font-size':sz*1.3,'font-weight':800,fill:col},svg,w);x=cx+sz*.55}
+  el('text',{x,y:cy-5,'text-anchor':'middle','font-size':sz,'font-weight':800,fill:col},svg,n);
+  el('line',{x1:x-sz*.6,y1:cy,x2:x+sz*.6,y2:cy,stroke:col,'stroke-width':2.5},svg);
+  el('text',{x,y:cy+sz-2,'text-anchor':'middle','font-size':sz,'font-weight':800,fill:col},svg,d)}
+function sVal(svg,cx,cy,N,D,col,sz){const g=gcd(N,D),n=N/g,d=D/g,w=Math.floor(n/d),r=n%d;if(r===0){el('text',{x:cx,y:cy+sz*.36,'text-anchor':'middle','font-size':sz*1.3,'font-weight':800,fill:col},svg,w);return}sFrac(svg,cx,cy,r,d,col,sz,w)}
+/* bar row: wholes × D cells; fill(i) → null | colour | {c,x} */
+const GAP=12;
+function drawRow(svg,x,y,ww,h,D,wholes,fill){for(let k=0;k<wholes;k++){const bx=x+k*(ww+GAP),cw=ww/D;
+  for(let i=0;i<D;i++){const f=fill(k*D+i),c=f?(f.c||f):'#fff';el('rect',{x:bx+i*cw,y,width:cw,height:h,fill:c,stroke:C.ink,'stroke-width':1.3},svg);
+    if(f&&f.x){el('path',{d:`M${bx+i*cw+4} ${y+4} L${bx+(i+1)*cw-4} ${y+h-4} M${bx+(i+1)*cw-4} ${y+4} L${bx+i*cw+4} ${y+h-4}`,stroke:C.red,'stroke-width':3,'stroke-linecap':'round'},svg)}}
+  el('rect',{x:bx,y,width:ww,height:h,fill:'none',stroke:C.ink,'stroke-width':3,rx:3},svg)}}
+
+/* ---------- Slides ---------- */
+const slides=[...document.querySelectorAll('.slide')];const dots=$('dots');let cur=0;
+slides.forEach((s,i)=>{const b=document.createElement('button');b.className='dot';b.textContent=i+1;b.title=s.dataset.name;b.onclick=()=>go(i);dots.appendChild(b)});
+function go(i){
+  cur=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach((s,j)=>s.classList.toggle('active',j===cur));
+  [...dots.children].forEach((d,j)=>{d.classList.toggle('on',j===cur);d.classList.toggle('done',j<cur)});
+  const s=slides[cur];
+  $('stageName').textContent=s.dataset.name;$('sheetNo').textContent=(cur+1)+'/'+slides.length;
+  $('tnList').innerHTML='<li>⏱ Зөвлөмж хугацаа: ≈'+s.dataset.min+' мин</li>'+s.dataset.notes.split('|').map(t=>'<li>'+t+'</li>').join('');
+  $('prevBtn').disabled=cur===0;$('nextBtn').textContent=cur===slides.length-1?'🏁 Төгсгөл':'Дараах ▶';
+}
+$('prevBtn').onclick=()=>go(cur-1);$('nextBtn').onclick=()=>go(cur+1);
+document.addEventListener('keydown',e=>{
+  const t=e.target;if(t.isContentEditable||t.tagName==='INPUT'||t.tagName==='TEXTAREA')return;
+  if(e.key==='ArrowRight'||e.key==='PageDown')go(cur+1);
+  else if(e.key==='ArrowLeft'||e.key==='PageUp')go(cur-1);
+  else if(e.key==='f'||e.key==='F')toggleFS();
+  else if(e.key==='n'||e.key==='N')toggleNotes();
+});
+function toggleFS(){if(!document.fullscreenElement){if(document.documentElement.requestFullscreen)document.documentElement.requestFullscreen()}else if(document.exitFullscreen)document.exitFullscreen()}
+function toggleNotes(){$('tnotes').classList.toggle('show')}
+$('fsBtn').onclick=toggleFS;$('notesBtn').onclick=toggleNotes;
+
+/* ---------- Timer ---------- */
+let remain=40*60,running=false,tick=null;
+function drawT(){const a=Math.abs(remain),m=Math.floor(a/60),s=a%60;$('tval').textContent=(remain<0?'+':'')+m+':'+String(s).padStart(2,'0');$('timer').className='timer'+(remain<0?' over':remain<=300?' warn':'')}
+$('tPlay').onclick=()=>{running=!running;$('tPlay').textContent=running?'⏸':'▶';if(running)tick=setInterval(()=>{remain--;drawT()},1000);else clearInterval(tick)};
+$('timer').ondblclick=()=>{remain=40*60;drawT()};drawT();
+
+/* editable */
+document.querySelectorAll('[data-k]').forEach(e=>{const k=e.dataset.k;e.textContent=store.get(k)||'';e.addEventListener('input',()=>store.set(k,e.innerText))});
+
+/* ================= ② Reception ================= */
+$('s2Prob').innerHTML=mk('[1|4] + [2|4] = [3|8]');
+let votes={w:0,s:0};
+function vDraw(){$('cWell').textContent=votes.w;$('cSick').textContent=votes.s;const t=votes.w+votes.s;$('thermo').style.height=(t?Math.max(6,votes.s/t*100):10)+'%'}
+$('tWell').onclick=()=>{votes.w++;vDraw()};$('tSick').onclick=()=>{votes.s++;vDraw()};
+$('s2Reset').onclick=()=>{votes={w:0,s:0};vDraw();$('s2Hint').classList.add('hide')};
+$('s2Reveal').onclick=()=>{$('s2Hint').classList.remove('hide');const s=$('s2Svg');s.innerHTML='';
+  drawRow(s,90,10,480,46,4,1,i=>i<2?C.mint:null);sFrac(s,45,33,2,4,C.ink,22);
+  drawRow(s,90,72,480,46,8,1,i=>i<3?C.redS:null);sFrac(s,45,95,3,8,C.red,22);
+  el('line',{x1:330,y1:2,x2:330,y2:126,stroke:C.blue,'stroke-width':3,'stroke-dasharray':'7 5'},s);el('text',{x:600,y:70,'font-size':18,'font-weight':800,fill:C.blue},s,'хагас');vDraw()};
+vDraw();
+
+/* ================= merge engine (slides ③ ④) ================= */
+function drawMerge(svg,c,t){svg.innerHTML='';const X=150,W=560,H=46,cw=W/c.d,Y=[12,80,166,246];
+  sFrac(svg,70,Y[0]+23,c.a,c.d,C.mint);sFrac(svg,70,Y[1]+23,c.b,c.d,C.blue);
+  el('text',{x:70,y:Y[1]+H+28,'text-anchor':'middle','font-size':26,'font-weight':900,fill:C.ink},svg,c.op==='+'?'+  ⬇':'−  ⬇');
+  drawRow(svg,X,Y[0],W,H,c.d,1,i=>i<c.a?C.mint:null);
+  drawRow(svg,X,Y[1],W,H,c.d,1,i=>i<c.b?C.blue:null);
+  drawRow(svg,X,Y[2],W,H,c.d,1,()=>null);
+  if(t>0){for(let i=0;i<c.a;i++)el('rect',{x:X+i*cw+1,y:Y[0]+(Y[2]-Y[0])*t+1,width:cw-2,height:H-2,fill:C.mint,opacity:.95},svg);
+    for(let i=0;i<c.b;i++){const tx=c.op==='+'?c.a+i:c.a-c.b+i,x=X+i*cw+(tx-i)*cw*t,y=Y[1]+(Y[2]-Y[1])*t;
+      el('rect',{x:x+1,y:y+1,width:cw-2,height:H-2,fill:c.op==='+'?C.blue:'rgba(255,255,255,.85)',opacity:.95,stroke:c.op==='+'?'none':C.red,'stroke-width':2},svg);
+      if(c.op!=='+'&&t>.95)el('path',{d:`M${x+5} ${y+5} L${x+cw-5} ${y+H-5} M${x+cw-5} ${y+5} L${x+5} ${y+H-5}`,stroke:C.red,'stroke-width':3.5,'stroke-linecap':'round'},svg)}
+    el('rect',{x:X,y:Y[2],width:W,height:H,fill:'none',stroke:C.ink,'stroke-width':3,rx:3},svg)}
+  const R=c.op==='+'?c.a+c.b:c.a-c.b;
+  if(t>=1)sFrac(svg,70,Y[2]+23,R,c.d,C.ink);else el('text',{x:70,y:Y[2]+33,'text-anchor':'middle','font-size':32,'font-weight':900,fill:C.muted||'#4f6f68'},svg,'?');
+  if(c.pat){drawRow(svg,X,Y[3],W,H,c.pat[1],1,i=>i<c.pat[0]?C.redS:null);sFrac(svg,70,Y[3]+23,c.pat[0],c.pat[1],C.red);el('text',{x:70,y:Y[3]-6,'text-anchor':'middle','font-size':15,'font-weight':800,fill:C.red},svg,'🐰 хариу');
+    const xp=X+W*c.pat[0]/c.pat[1],xr=X+W*R/c.d;el('line',{x1:xp,y1:Y[2]-6,x2:xp,y2:Y[3]+H+4,stroke:C.red,'stroke-width':3,'stroke-dasharray':'7 5'},svg);
+    if(t>=1){el('line',{x1:xr,y1:Y[2]-6,x2:xr,y2:Y[3]+H+4,stroke:C.mint,'stroke-width':3,'stroke-dasharray':'7 5'},svg);el('path',{d:`M${xr} ${Y[3]+H/2} L${xp+8} ${Y[3]+H/2}`,stroke:C.red,'stroke-width':3,'marker-end':''},svg);
+      el('text',{x:(xp+xr)/2,y:Y[3]+H/2-8,'text-anchor':'middle','font-size':16,'font-weight':900,fill:C.red},svg,'алдагдсан хэсэг!')}}}
+
+/* ================= ③ Diagnose ================= */
+const D3={a:1,b:2,d:4,op:'+',pat:null};let d3t=0;
+function d3Draw(){drawMerge($('dSvg'),D3,d3t)}
+$('dMerge').onclick=()=>anim(1300,t=>{d3t=t;d3Draw()});
+$('dCmp').onclick=()=>{D3.pat=[3,8];d3Draw()};
+$('dReset').onclick=()=>{D3.pat=null;d3t=0;d3Draw();$('dFb').textContent='';document.querySelectorAll('#dQ .btn').forEach(b=>b.classList.remove('right','wrong'));$('dAbs').classList.add('hide')};
+document.querySelectorAll('#dQ .btn').forEach(b=>b.onclick=()=>{const ok=b.dataset.v==='a';b.classList.add(ok?'right':'wrong');const f=$('dFb');
+  if(ok){f.className='feedback ok';f.innerHTML='✅ Зөв! '+frH(3,4)+' нь '+frH(3,8)+'-аас 2 дахин их. Туулай өвчтэй байжээ!';confetti(40)}else{f.className='feedback no';f.textContent='🤔 Хоёр туузыг тасархай шугамаар харьцуулаарай.'}});
+$('dAbsBtn').onclick=()=>$('dAbs').classList.toggle('hide');
+d3Draw();
+
+/* ================= ④ Rule: same denominators ================= */
+let R4={a:3,b:2,d:8,op:'+'},r4t=0;
+function r4Sync(){const d=+$('rD').value;$('rA').max=R4.op==='+'?d-1:d-1;let a=Math.min(+$('rA').value,d-1);$('rA').value=a;
+  const bmax=R4.op==='+'?d-a:a;$('rB').max=bmax;let b=Math.min(+$('rB').value,bmax);$('rB').value=b;
+  R4.a=a;R4.b=b;R4.d=d;$('rDv').textContent=d;$('rAv').textContent=a;$('rBv').textContent=b;r4t=0;r4Draw();
+  $('rForm').innerHTML=frH(a,d)+' '+R4.op+' '+frH(b,d)+' = <span style="color:#4f6f68">?</span>';$('rFb').textContent=''}
+function r4Draw(){drawMerge($('rSvg'),R4,r4t)}
+['rD','rA','rB'].forEach(id=>$(id).oninput=r4Sync);
+document.querySelectorAll('[data-op]').forEach(b=>b.onclick=()=>{R4.op=b.dataset.op;document.querySelectorAll('[data-op]').forEach(x=>x.classList.toggle('on',x===b));r4Sync()});
+$('rGo').onclick=()=>{r4t=0;anim(1300,t=>{r4t=t;r4Draw()},()=>{const R=R4.op==='+'?R4.a+R4.b:R4.a-R4.b;
+  $('rForm').innerHTML=frH(R4.a,R4.d)+' '+R4.op+' '+frH(R4.b,R4.d)+' = '+frH(`${R4.a} ${R4.op} ${R4.b}`,R4.d)+' = '+frH(R,R4.d)+(gcd(R,R4.d)>1||R===R4.d?' = '+valH(R,R4.d):'');
+  $('rFb').className='feedback ok';$('rFb').textContent='💊 Хуваарь '+R4.d+' хэвээрээ! Хэсгийн хэмжээ өөрчлөгдөөгүй.'})};
+r4Sync();
+
+/* ================= ⑤ Rule: common denominator ================= */
+const CD=[{n1:1,d1:4,n2:5,d2:8,op:'+',t:'х.59 · Жишээ 2'},{n1:7,d1:8,n2:1,d2:2,op:'−',t:'х.59 · Сүү 🥛'},{n1:1,d1:4,n2:5,d2:6,op:'+',t:'х.60 · Жишээ'}];
+let cdi=0,cdL=0,cdCutT=0,cdRes=false;
+CD.forEach((e,i)=>{const b=document.createElement('button');b.className='btn ghost sm'+(i?'':' on');b.innerHTML=frH(e.n1,e.d1)+' '+e.op+' '+frH(e.n2,e.d2)+' <small style="font-weight:600">'+e.t+'</small>';b.onclick=()=>{cdi=i;[...$('cdTabs').children].forEach(x=>x.classList.toggle('on',x===b));cdInit()};$('cdTabs').appendChild(b)});
+function cdInit(){const e=CD[cdi];cdL=0;cdCutT=0;cdRes=false;$('cdCut').disabled=true;$('cdGo').disabled=true;$('cdGo').textContent=e.op==='+'?'➕ 3) Нийлүүлэх':'➖ 3) Хасах';
+  $('cdMfb').textContent='';$('cdFb').textContent='';clearF('cdIn');
+  $('cdForm').innerHTML=frH(e.n1,e.d1)+' '+e.op+' '+frH(e.n2,e.d2)+' = ?';
+  [[e.d1,'cdM1'],[e.d2,'cdM2']].forEach(([d,id])=>{const r=$(id);r.innerHTML='<b>'+d+'-ын хуваагдагч:</b>';for(let k=1;k<=6;k++){const b=document.createElement('button');b.className='mc';b.textContent=d*k;b.onclick=()=>cdPick(d*k,b);r.appendChild(b)}});
+  cdDraw()}
+function cdPick(v,b){const e=CD[cdi],L=lcm(e.d1,e.d2),f=$('cdMfb');document.querySelectorAll('#cdM1 .mc,#cdM2 .mc').forEach(x=>x.classList.remove('miss'));
+  if(v%e.d1||v%e.d2){b.classList.add('miss');f.className='feedback no';f.textContent='🤔 '+v+' нөгөө мөрөнд алга. Хоёуланд нь байгаа тоог ол!';return}
+  if(v!==L){document.querySelectorAll('#cdM1 .mc,#cdM2 .mc').forEach(x=>{if(+x.textContent===v)x.classList.add('cm')});f.className='feedback';f.style.color='#9a6b00';f.textContent='👍 '+v+' ч болно! Гэхдээ үүнээс бага ижил тоо байна уу?';return}
+  f.style.color='';document.querySelectorAll('#cdM1 .mc,#cdM2 .mc').forEach(x=>{if(+x.textContent===L)x.classList.add('hit')});
+  cdL=L;f.className='feedback ok';f.textContent='✅ Ерөнхий хуваарь = '+L+'. Одоо ✂ хэсэглэ!';$('cdCut').disabled=false}
+function cdDraw(){const s=$('cdSvg'),e=CD[cdi];s.innerHTML='';const L=cdL||lcm(e.d1,e.d2),k1=L/e.d1,k2=L/e.d2,A=e.n1*k1,B=e.n2*k2;
+  const tot=e.op==='+'?A+B:A,wh=Math.max(1,Math.ceil(tot/L)),ww=wh>1?285:570,X=150,H=48,Y=[14,96,206];
+  drawRow(s,X,Y[0],ww,H,e.d1,1,i=>i<e.n1?C.mint:null);drawRow(s,X,Y[1],ww,H,e.d2,1,i=>i<e.n2?C.blue:null);
+  if(cdCutT>0){[[Y[0],L],[Y[1],L]].forEach(([y,n])=>{for(let i=1;i<n;i++)el('line',{x1:X+ww*i/n,y1:y+2,x2:X+ww*i/n,y2:y+H-2,stroke:C.ink,'stroke-width':1.5,'stroke-dasharray':'4 3',opacity:cdCutT},s)})}
+  const lab=(y,n,d,k,col)=>{if(cdCutT>=1&&k>1){sFrac(s,70,y+24,n*k,d*k,col);el('text',{x:X+ww+16+(wh>1?0:0),y:y+31,'font-size':18,'font-weight':800,fill:col},s,'= '+n+'·'+k+' / '+d+'·'+k)}else sFrac(s,70,y+24,n,d,col)};
+  lab(Y[0],e.n1,e.d1,k1,C.mint);lab(Y[1],e.n2,e.d2,k2,C.blue);
+  if(wh>1&&cdCutT>=1){/* labels drawn right of bar fit since ww=285 */}
+  el('text',{x:70,y:Y[2]-18,'text-anchor':'middle','font-size':26,'font-weight':900,fill:C.ink},s,e.op+' ⬇');
+  if(cdRes){drawRow(s,X,Y[2],ww,H,L,wh,i=>{if(e.op==='+')return i<A?C.mint:i<A+B?C.blue:null;return i<A-B?C.mint:i<A?{c:'#fff',x:true}:null});sVal(s,70,Y[2]+24,e.op==='+'?A+B:A-B,L,C.ink,24)}
+  else{drawRow(s,X,Y[2],ww,H,cdL||L,1,()=>null);el('text',{x:70,y:Y[2]+34,'text-anchor':'middle','font-size':32,'font-weight':900,fill:'#4f6f68'},s,'?')}}
+$('cdCut').onclick=()=>{anim(900,t=>{cdCutT=t;cdDraw()},()=>{const e=CD[cdi],k1=cdL/e.d1,k2=cdL/e.d2;$('cdForm').innerHTML=frH(e.n1*k1,cdL)+' '+e.op+' '+frH(e.n2*k2,cdL)+' = ?';$('cdGo').disabled=false})};
+$('cdGo').onclick=()=>{cdRes=true;cdDraw();const e=CD[cdi],k1=cdL/e.d1,k2=cdL/e.d2,R=e.op==='+'?e.n1*k1+e.n2*k2:e.n1*k1-e.n2*k2;
+  $('cdForm').innerHTML=frH(e.n1*k1,cdL)+' '+e.op+' '+frH(e.n2*k2,cdL)+' = '+frH(R,cdL)+' = ?'};
+$('cdChk').onclick=()=>{const e=CD[cdi],L=lcm(e.d1,e.d2),R=e.op==='+'?e.n1*L/e.d1+e.n2*L/e.d2:e.n1*L/e.d1-e.n2*L/e.d2,a=readF('cdIn'),f=$('cdFb');
+  if(eqV(a,R,L)){markF('cdIn',true);f.className='feedback ok';f.innerHTML='🎉 Зөв! Хариу: '+valH(R,L)+(cdi===1?' л сүү үлдсэн.':'');confetti(50);if(!cdRes){cdL=L;cdCutT=1;cdRes=true;cdDraw()}}
+  else{markF('cdIn',false);f.className='feedback no';f.textContent='🤔 Ерөнхий хуваарь олоод, хүртвэрийг ч мөн үржүүлсэн үү?'}};
+fin('cdIn');cdInit();
+
+/* ================= ⑥ Ward rounds ================= */
+const DG={A:'Хуваарийг нэмсэн/хассан',B:'Ерөнхий хуваарь олоогүй',C:'Хүртвэрийг үржүүлээгүй',D:'Хураагаагүй',E:'Бүхэл хэсгийг мартсан'};
+const PT=[
+ {em:'🐰',nm:'Туулай',lv:'⭐',st:['[1|4] + [2|4] = [1 + 2|4 + 4]','= [3|8]'],w:0,dg:['A'],N:3,D:4,why:'Хуваарь ижил тул хэвээр үлдэнэ: 1 + 2 = 3 дөрөвний нэг.'},
+ {em:'🐻',nm:'Баавгай',lv:'⭐',st:['[7|8] − [1|2] = [7 − 1|8 − 2]','= [6|6] = 1'],w:0,dg:['B','A'],N:3,D:8,why:'Хуваарь өөр! [1|2] = [4|8] болгоод: [7|8] − [4|8].'},
+ {em:'🐼',nm:'Панда',lv:'⭐⭐',st:['Ерөнхий хуваарь: 8','[1|4] = [1|8]','[1|8] + [5|8] = [6|8] = [3|4]'],w:1,dg:['C'],N:7,D:8,why:'Хуваарийг 2 дахин ихэсгэвэл хүртвэрийг ч 2 дахин: [1|4] = [2|8].'},
+ {em:'🦊',nm:'Үнэг',lv:'⭐⭐',st:['Ерөнхий хуваарь: 12','[5|6] = [10|12]','[10|12] − [1|12] = [9|12]','Хариу: [9|12]. Дууслаа!'],w:3,dg:['D'],N:3,D:4,red:true,why:'9 ба 12 хоёул 3-т хуваагдана: [9|12] = [3|4].'},
+ {em:'🐯',nm:'Бар',lv:'⭐⭐⭐',st:['Ерөнхий хуваарь: 8','[3|4] = [6|8]','[2;6|8] − [1;1|8] = [5|8]'],w:2,dg:['E'],N:13,D:8,why:'Бүхэл хэсгийг ч хасна: 2 − 1 = 1, тэгээд [6|8] − [1|8] = [5|8].'},
+ {em:'🐸',nm:'Мэлхий',lv:'⭐⭐⭐',st:['Ерөнхий хуваарь: 12','[1|4] = [3|12],  [5|6] = [10|12]','[3|12] + [10|12] = [13|24]'],w:2,dg:['A'],N:13,D:12,why:'Ерөнхий хуваарь олсны дараа хуваарь 12 хэвээр: [13|12] = [1;1|12].'}
+];
+let wi=0;const WS=PT.map(()=>({stage:0}));
+function healedN(){return WS.filter(s=>s.stage===3).length}
+function wRender(){const p=PT[wi],S=WS[wi];
+  $('beds').innerHTML='';PT.forEach((q,i)=>{const b=document.createElement('button');b.className='bed'+(i===wi?' on':'')+(WS[i].stage===3?' ok':'');b.innerHTML=`<span class="em">${q.em}</span>${i+1}. ${q.nm} <small>${q.lv}</small><span class="st">${WS[i].stage===3?'💚':'🤒'}</span>`;b.onclick=()=>{wi=i;wRender()};$('beds').appendChild(b)});
+  $('wName').innerHTML=p.em+' '+p.nm;$('wLvl').textContent=p.lv;
+  [...$('wPhase').children].forEach((x,i)=>{x.className=i<S.stage?'done':i===S.stage?'on':''});
+  $('wSteps').innerHTML='';p.st.forEach((t,i)=>{const li=document.createElement('li');li.innerHTML=`<span class="n">${i+1}</span><span>${mk(t)}</span>`;if(S.stage>0&&i===p.w)li.classList.add('bad');if(S.stage>0&&i<p.w)li.classList.add('good');
+    li.onclick=()=>wStep(i,li);$('wSteps').appendChild(li)});
+  $('wDiag').innerHTML='';if(S.stage>=1){Object.keys(DG).forEach(k=>{const b=document.createElement('button');b.className='btn ghost';b.textContent='🩺 '+DG[k];if(S.stage>1&&p.dg.includes(k))b.classList.add('on');b.disabled=S.stage!==1;b.onclick=()=>wDiag(k,b);$('wDiag').appendChild(b)})}
+  $('wCure').classList.toggle('hide',S.stage<2);clearF('wIn');$('wFb').textContent='';$('wSvg').innerHTML='';
+  if(S.stage===2){$('wFb').className='feedback';$('wFb').innerHTML='💡 '+mk(p.why)}
+  if(S.stage===3){$('wFb').className='feedback ok';$('wFb').innerHTML='💚 Эдгэрсэн! Зөв хариу: '+valH(p.N,p.D);wBar()}
+  if(S.stage===0){$('wFb').className='feedback';$('wFb').textContent='👆 Аль алхамд алдаа гарсныг дарж заа.'}
+  $('healed').textContent=healedN()}
+function wStep(i,li){const p=PT[wi],S=WS[wi];if(S.stage!==0)return;const f=$('wFb');
+  if(i===p.w){S.stage=1;wRender();$('wFb').className='feedback ok';$('wFb').textContent='✅ Алдааг оллоо! Одоо онош тавь.'}
+  else if(i<p.w){li.classList.add('good');f.className='feedback no';f.textContent='👍 Энэ алхам эрүүл байна. Цааш нь шалга!'}
+  else{f.className='feedback no';f.textContent='🤔 Алдаа үүнээс өмнө эхэлсэн байна.'}}
+function wDiag(k,b){const p=PT[wi],S=WS[wi];if(p.dg.includes(k)){S.stage=2;wRender()}else{b.classList.add('wrong');b.style.borderColor=C.red;$('wFb').className='feedback no';$('wFb').textContent='🤔 Өөр онош байна. Алдаатай мөрийг дахин хар.'}}
+function wBar(){const p=PT[wi],s=$('wSvg');s.innerHTML='';const wh=Math.ceil(p.N/p.D),ww=wh>1?280:560;drawRow(s,120,8,ww,46,p.D,wh,i=>i<p.N?C.mint:null);sVal(s,55,31,p.N,p.D,C.ink,20)}
+$('wChk').onclick=()=>{const p=PT[wi],S=WS[wi],a=readF('wIn'),f=$('wFb');if(S.stage!==2)return;
+  if(eqV(a,p.N,p.D)&&(!p.red||a.red)){S.stage=3;confetti(70);wRender()}
+  else if(eqV(a,p.N,p.D)){markF('wIn',false);f.className='feedback no';f.textContent='💊 Утга нь зөв, гэхдээ хураах ёстой!'}
+  else{markF('wIn',false);f.className='feedback no';f.innerHTML='🤔 Дахин бод. '+mk(p.why)}};
+$('wNext').onclick=()=>{const n=PT.findIndex((q,i)=>i>wi&&WS[i].stage<3);const m=n>=0?n:PT.findIndex(q=>WS[PT.indexOf(q)].stage<3);if(m>=0){wi=m;wRender()}else{$('wFb').className='feedback ok';$('wFb').textContent='🏥 Бүх өвчтөн эдгэрлээ! Гайхалтай эмч нар!';confetti(120)}};
+fin('wIn');wRender();
+
+/* ================= ⑦ Practice ================= */
+let plv=1,P=null,pDone=false,pScore=0;
+function genP(){let d1,d2,n1,n2,w1=0,w2=0,op=pick(['+','−']);
+  if(plv===1){d1=d2=ri(3,12);if(op==='+'){n1=ri(1,d1-2);n2=ri(1,d1-1-n1)}else{n1=ri(2,d1-1);n2=ri(1,n1-1)}}
+  else if(plv===2){const a=ri(2,6),k=pick([2,3]);let p=[a,a*k];if(Math.random()<.5)p.reverse();[d1,d2]=p;n1=ri(1,d1-1);n2=ri(1,d2-1);
+    if(op==='−'&&n1*d2<=n2*d1){[d1,d2]=[d2,d1];[n1,n2]=[n2,n1];if(n1*d2===n2*d1)op='+'}}
+  else{if(Math.random()<.5){[d1,d2]=pick([[2,3],[3,4],[4,6],[2,5],[3,5],[6,8],[4,10],[6,9],[4,3],[6,4]]);n1=ri(1,d1-1);n2=ri(1,d2-1);
+      if(op==='−'&&n1*d2<=n2*d1){[d1,d2]=[d2,d1];[n1,n2]=[n2,n1];if(n1*d2===n2*d1)op='+'}}
+    else{const a=pick([2,3,4,5,6]),k=pick([1,2]);d1=a;d2=a*k;if(Math.random()<.5)[d1,d2]=[d2,d1];n1=ri(1,d1-1);n2=ri(1,d2-1);w1=ri(1,3);w2=op==='+'?ri(0,2):ri(0,w1-1);
+      if(op==='−'&&(w1*d1+n1)*d2<=(w2*d2+n2)*d1){w2=0;if(w1*d1+n1<=0)w1=2}}}
+  const N1=w1*d1+n1,N2=w2*d2+n2,L=lcm(d1,d2),A=N1*L/d1,B=N2*L/d2;return{d1,d2,n1,n2,w1,w2,N1,N2,op,L,A,B,R:op==='+'?A+B:A-B}}
+function pShow(){P=genP();pDone=false;$('pQ').innerHTML=mk(`${P.w1?`[${P.w1};${P.n1}|${P.d1}]`:`[${P.n1}|${P.d1}]`} ${P.op} ${P.w2?`[${P.w2};${P.n2}|${P.d2}]`:`[${P.n2}|${P.d2}]`} =`);clearF('pIn');$('pFb').textContent='';pDraw(false)}
+function pDraw(sol){const s=$('pSvg');s.innerHTML='';const wA=Math.ceil(P.N1/P.d1),wB=Math.max(1,Math.ceil(P.N2/P.d2)),wR=Math.max(1,Math.ceil((P.op==='+'?P.R:P.A)/P.L)),mx=Math.max(wA,wB,wR),ww=Math.min(570,(570-(mx-1)*GAP)/mx),X=150,H=46,Y=[12,86,176];
+  drawRow(s,X,Y[0],ww,H,P.d1,wA,i=>i<P.N1?C.mint:null);sVal(s,70,Y[0]+23,P.N1,P.d1,C.mint,22);
+  drawRow(s,X,Y[1],ww,H,P.d2,wB,i=>i<P.N2?C.blue:null);sVal(s,70,Y[1]+23,P.N2,P.d2,C.blue,22);
+  el('text',{x:70,y:Y[2]-14,'text-anchor':'middle','font-size':24,'font-weight':900,fill:C.ink},s,P.op+' ⬇');
+  if(sol){drawRow(s,X,Y[2],ww,H,P.L,wR,i=>{if(P.op==='+')return i<P.A?C.mint:i<P.A+P.B?C.blue:null;return i<P.A-P.B?C.mint:i<P.A?{c:'#fff',x:true}:null});sVal(s,70,Y[2]+23,P.R,P.L,C.ink,22)}
+  else el('text',{x:70,y:Y[2]+33,'text-anchor':'middle','font-size':32,'font-weight':900,fill:'#4f6f68'},s,'?')}
+$('pChk').onclick=()=>{const a=readF('pIn'),f=$('pFb');if(!a){f.className='feedback no';f.textContent='✏️ Хүртвэр, хуваарийг бичээрэй.';return}
+  if(eqV(a,P.R,P.L)){markF('pIn',true);f.className='feedback ok';f.innerHTML='💚 Эрүүл! '+'⭐'.repeat(plv)+(a.red?'':' Хураавал: '+valH(P.R,P.L));pDraw(true);if(!pDone){pDone=true;pScore++;$('pScore').textContent=pScore;confetti(35)}}
+  else{markF('pIn',false);f.className='feedback no';f.innerHTML='🤒 Ахиад шалга. Ерөнхий хуваарь: <b>'+P.L+'</b>. Туузаас хар!';pDraw(true)}};
+$('pNew').onclick=pShow;
+document.querySelectorAll('[data-lv]').forEach(b=>b.onclick=()=>{plv=+b.dataset.lv;document.querySelectorAll('[data-lv]').forEach(x=>x.classList.toggle('on',x===b));pShow()});
+fin('pIn');pShow();
+
+/* ================= ⑧ Textbook calls ================= */
+['e1','e2','m1','m2','m3','m4'].forEach(id=>fin(id));
+document.querySelectorAll('[data-chk]').forEach(b=>b.onclick=()=>{const id=b.dataset.chk,N=+b.dataset.n,D=+b.dataset.d,a=readF(id),f=$(id+'Fb');
+  if(eqV(a,N,D)){markF(id,true);f.className='feedback ok';f.innerHTML='✅ '+valH(N,D);confetti(30)}else{markF(id,false);f.className='feedback no';f.textContent='🤔'}});
+
+/* ================= ⑨ Exit check ================= */
+const EX=[
+ {q:'[2|7] + [3|7] = ?',o:['[5|14]','[5|7]','[6|7]'],a:1},
+ {q:'[1|3] + [1|6]: ерөнхий хуваарь хэд вэ?',o:['9','6','18'],a:1},
+ {q:'[5|6] − [1|2] = ?',o:['[4|4]','[1|3]','[4|6]'],a:1},
+ {q:'[4;2|5] − [1;2|5] = ?',o:['3','[3;2|5]','[5;4|5]'],a:0}
+];
+const EXS=EX.map(()=>({done:false,first:null}));
+EX.forEach((e,i)=>{const c=document.createElement('div');c.className='card';c.innerHTML=`<div style="font-weight:800">${i+1}) ${mk(e.q)}</div><div class="opts"></div>`;
+  e.o.forEach((o,j)=>{const b=document.createElement('button');b.className='btn ghost';b.innerHTML=mk(o);b.onclick=()=>{if(EXS[i].done)return;const ok=j===e.a;if(EXS[i].first===null)EXS[i].first=ok;b.classList.add(ok?'right':'wrong');if(ok){EXS[i].done=true;exUpd()}};c.querySelector('.opts').appendChild(b)});
+  $('exQ').appendChild(c)});
+function exUpd(){const sc=EXS.filter(s=>s.first).length;$('exScore').textContent=sc;if(EXS.every(s=>s.done)){$('lic').classList.remove('locked');$('exFb').className='feedback ok';$('exFb').textContent='🎖️ Баяр хүргэе! Үнэмлэх дээр нэрээ бич.';confetti(120)}}
+
+/* stars */
+(()=>{const b=[...document.querySelectorAll('#stars3 button')];const set=n=>{b.forEach((x,i)=>x.classList.toggle('on',i<n));store.set('frac_clinic_stars',n)};b.forEach((x,i)=>x.onclick=()=>{set(i+1);if(i===2)confetti(60)});set(+(store.get('frac_clinic_stars')||0))})();
+
+/* ================= Confetti (medical pluses & hearts) ================= */
+const cf=$('confetti'),cfx=cf.getContext('2d');let parts=[],cRun=false;
+function confetti(n){cf.width=innerWidth;cf.height=innerHeight;const cols=['#e5484d','#2bb58a','#3d8be0','#ffc93c','#17876a','#ff8fa3'];
+  for(let i=0;i<n;i++)parts.push({x:innerWidth/2+rnd(-160,160),y:innerHeight*.45,vx:rnd(-7,7),vy:-rnd(4,18),s:rnd(9,15),c:cols[i%6],r:rnd(0,6),life:120,h:i%3===0});
+  if(!cRun){cRun=true;requestAnimationFrame(cStep)}}
+function cStep(){cfx.clearRect(0,0,cf.width,cf.height);parts.forEach(p=>{p.vy+=.4;p.x+=p.vx;p.y+=p.vy;p.r+=.12;p.life--;cfx.save();cfx.translate(p.x,p.y);cfx.rotate(p.r);cfx.fillStyle=p.c;const s=p.s;
+  if(p.h){cfx.beginPath();cfx.moveTo(0,s*.35);cfx.bezierCurveTo(-s*.7,-s*.1,-s*.35,-s*.6,0,-s*.25);cfx.bezierCurveTo(s*.35,-s*.6,s*.7,-s*.1,0,s*.35);cfx.fill()}
+  else{cfx.fillRect(-s/2,-s/6,s,s/3);cfx.fillRect(-s/6,-s/2,s/3,s)}cfx.restore()});
+  parts=parts.filter(p=>p.life>0&&p.y<cf.height+20);if(parts.length)requestAnimationFrame(cStep);else{cRun=false;cfx.clearRect(0,0,cf.width,cf.height)}}
+
+go(0);
+</script>
+</body>
+</html>
